@@ -1,6 +1,13 @@
-var builder = WebApplication.CreateBuilder(args);
-var app = builder.Build();
+using ECommerce.Shared.Authentication;
+using Ocelot.DependencyInjection;
+using Ocelot.Middleware;
 
-app.MapGet("/", () => "Hello World!");
+var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddJsonFile("ocelot.json", false, false);
+builder.Services.AddOcelot(builder.Configuration);
+builder.Services.AddJwtAuthentication(builder.Configuration);
+var app = builder.Build();
+app.UseJwtAuthentication();
+await app.UseOcelot();
 
 app.Run();

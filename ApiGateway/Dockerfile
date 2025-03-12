@@ -1,21 +1,22 @@
 ﻿FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
-USER $APP_UID
 WORKDIR /app
-EXPOSE 8080
-EXPOSE 8081
+
 
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["ApiGateway/ApiGateway.csproj", "ApiGateway/"]
+COPY ["api-gateway/ApiGateway/ApiGateway/ApiGateway.csproj", "ApiGateway/"]
+COPY ["local-nuget-packages/", "/local-nuget-packages/"]
+COPY ["api-gateway/ApiGateway/ApiGateway/nuget.config", "./"]
 RUN dotnet restore "ApiGateway/ApiGateway.csproj"
-COPY . .
+
+COPY ["api-gateway/ApiGateway/ApiGateway/", "ApiGateway"]
 WORKDIR "/src/ApiGateway"
 RUN dotnet build "ApiGateway.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "ApiGateway.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "ApiGateway.csproj" -c $BUILD_CONFIGURATION -o /app/publish 
 
 FROM base AS final
 WORKDIR /app

@@ -13,4 +13,9 @@
       </Content>
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="ecommerce.shared" Version="2.12.0" />
+      <PackageReference Include="Ocelot" Version="23.4.3" />
+    </ItemGroup>
+
 </Project>
